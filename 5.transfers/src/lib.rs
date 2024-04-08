@@ -53,8 +53,8 @@ impl Contract {
             total_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "Anil4_NEAR_Token".to_string(),
-                symbol: "AP4".to_string(),
+                name: "Anil6_NEAR_Token".to_string(),
+                symbol: "AP6".to_string(),
                 icon: Some(DATA_IMAGE_SVG_GT_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
