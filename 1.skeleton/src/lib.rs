@@ -6,7 +6,10 @@ use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, StorageUsa
 pub mod ft_core;
 pub mod metadata;
 pub mod storage;
+pub mod internal;
+pub mod events; 
 
+use crate::events::*;
 use crate::metadata::*;
 
 /// The image URL for the default icon
@@ -18,6 +21,13 @@ pub const FT_METADATA_SPEC: &str = "ft-1.0.0";
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
+	
+    /// Keep track of each account's balances
+    pub accounts: LookupMap<AccountId, Balance>,
+
+    /// Total supply of all tokens.
+    pub total_supply: Balance,
+	
     /// Metadata for the contract itself
     pub metadata: LazyOption<FungibleTokenMetadata>,
 }
@@ -61,11 +71,26 @@ impl Contract {
     ) -> Self {
         // Create a variable of type Self with all the fields initialized. 
         let mut this = Self {
-            metadata: LazyOption::new(
-                StorageKey::Metadata.try_to_vec().unwrap(),
-                Some(&metadata),
-            )
-        };
+	        // Set the total supply
+	        total_supply: total_supply.0,
+	        // Storage keys are simply the prefixes used for the collections. This helps avoid data collision
+	        accounts: LookupMap::new(StorageKey::Accounts.try_to_vec().unwrap()),
+	        metadata: LazyOption::new(
+	            StorageKey::Metadata.try_to_vec().unwrap(),
+	            Some(&metadata),
+	        ),
+	    };
+		
+	    // Set the owner's balance to the total supply.
+	    this.internal_deposit(&owner_id, total_supply.into());
+		
+        // Emit an event showing that the FTs were minted
+        FtMint {
+            owner_id: &owner_id,
+            amount: &total_supply,
+            memo: Some("Initial token supply is minted"),
+        }
+        .emit();
 
         // Return the Contract object
         this
