@@ -41,8 +41,8 @@ impl Contract {
             total_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "Team Token FT Tutorial".to_string(),
-                symbol: "gtNEAR".to_string(),
+                name: "ANIL_NEAR Tutorial".to_string(),
+                symbol: "apNEAR".to_string(),
                 icon: Some(DATA_IMAGE_SVG_GT_ICON.to_string()),
                 reference: None,
                 reference_hash: None,

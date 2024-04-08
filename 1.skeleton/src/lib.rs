@@ -18,9 +18,8 @@ pub const FT_METADATA_SPEC: &str = "ft-1.0.0";
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
-    /*
-        FILL THIS IN
-    */
+    /// Metadata for the contract itself
+    pub metadata: LazyOption<FungibleTokenMetadata>,
 }
 
 /// Helper structure for keys of the persistent collections.
@@ -36,10 +35,20 @@ impl Contract {
     /// default metadata (for example purposes only).
     #[init]
     pub fn new_default_meta(owner_id: AccountId, total_supply: U128) -> Self {
-        /*
-            FILL THIS IN
-        */
-        todo!(); //remove once code is filled in.
+        // Calls the other function "new: with some default metadata and the owner_id & total supply passed in 
+        Self::new(
+            owner_id,
+            total_supply,
+            FungibleTokenMetadata {
+                spec: FT_METADATA_SPEC.to_string(),
+                name: "ANIL_NEAR Tutorial".to_string(),
+                symbol: "apNEAR".to_string(),
+                icon: Some(DATA_IMAGE_SVG_GT_ICON.to_string()),
+                reference: None,
+                reference_hash: None,
+                decimals: 24,
+            },
+        )
     }
 
     /// Initializes the contract with the given total supply owned by the given `owner_id` with
@@ -50,9 +59,15 @@ impl Contract {
         total_supply: U128,
         metadata: FungibleTokenMetadata,
     ) -> Self {
-        /*
-            FILL THIS IN
-        */
-        todo!(); //remove once code is filled in.
+        // Create a variable of type Self with all the fields initialized. 
+        let mut this = Self {
+            metadata: LazyOption::new(
+                StorageKey::Metadata.try_to_vec().unwrap(),
+                Some(&metadata),
+            )
+        };
+
+        // Return the Contract object
+        this
     }
 }
